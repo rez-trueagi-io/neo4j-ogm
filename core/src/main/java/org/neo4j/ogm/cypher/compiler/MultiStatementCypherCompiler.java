@@ -89,7 +89,9 @@ public class MultiStatementCypherCompiler implements Compiler {
 
     @Override
     public NodeBuilder existingNode(Long existingNodeId) {
-        return existingNodeBuilders.computeIfAbsent(existingNodeId, DefaultNodeBuilder::new);
+        NodeBuilder nodeBuilder = existingNodeBuilders.computeIfAbsent(existingNodeId, DefaultNodeBuilder::new);
+        System.out.println(">>>> " + existingNodeBuilders);
+        return nodeBuilder;
     }
 
     @Override

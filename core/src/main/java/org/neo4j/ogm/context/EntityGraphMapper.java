@@ -266,15 +266,18 @@ public class EntityGraphMapper implements EntityMapper {
         NodeBuilder nodeBuilder = context.visitedNode(entity);
 
         if (context.visited(entity, horizon)) {
-            LOGGER.debug("already visited: {}", entity);
+            LOGGER.warn("already visited: {}", entity);
             return nodeBuilder;
         }
 
         if (nodeBuilder == null) {
+            System.out.println("new builder for " + entity);
             nodeBuilder = newNodeBuilder(entity, horizon);
             if (!isWriteProtected(WriteProtectionTarget.PROPERTIES, entity)) {
                 updateNode(entity, context, nodeBuilder);
             }
+        } else {
+            System.out.println("was an old one " + entity);
         }
 
         if (horizon != 0) {
@@ -300,18 +303,24 @@ public class EntityGraphMapper implements EntityMapper {
      */
     private void updateNode(Object entity, CompileContext context, NodeBuilder nodeBuilder) {
         // fire pre-save event here
+        System.out.println("bum " + entity);
         if (mappingContext.isDirty(entity)) {
-            LOGGER.debug("{} has changed", entity);
+            System.out.println("was dirty");
+            LOGGER.warn("{} has changed", entity);
             context.register(entity);
             ClassInfo classInfo = metaData.classInfo(entity);
             updateFieldsOnBuilder(entity, nodeBuilder, classInfo);
         } else {
+            System.out.println("dreig");
             context.deregister(nodeBuilder);
-            LOGGER.debug("{}, has not changed", entity);
+            LOGGER.warn("{}, has not changed", entity);
         }
 
     }
-
+public static void main(String...a) {
+    System.out.println("Mr White".hashCode());
+    System.out.println("Mr WhiteAa".hashCode());
+}
     /**
      * Returns a {@link NodeBuilder} responsible for handling new or updated nodes
      *
@@ -846,7 +855,7 @@ public class EntityGraphMapper implements EntityMapper {
         // - or the relationship has a defined direction
         // - or the relationships is defined on an object being explicitly mapped
         if (!alreadyVisitedNode || !selfReferentialUndirectedRelationship || relationshipFromExplicitlyMappedObject) {
-            LOGGER.debug("trying to map relationship between {} and {}", relNodes.source, relNodes.target);
+            LOGGER.warn("trying to map relationship between {} and {}", relNodes.source, relNodes.target);
             relNodes.targetId = mappingContext.nativeId(relNodes.target);
             updateRelationship(context, srcNodeBuilder, tgtNodeBuilder, relationshipBuilder, relNodes);
         }

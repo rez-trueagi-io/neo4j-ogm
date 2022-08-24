@@ -89,7 +89,7 @@ class IdentityMap {
      * @return true if the object hasn't changed since it was remembered, false otherwise
      */
     boolean remembered(Object object, Long entityId) {
-
+        System.out.println("checking " + object + " vs " + entityId);
         // Bail out early if the native id is null...
         if (entityId == null) {
             return false;
@@ -101,11 +101,13 @@ class IdentityMap {
 
         // ... or a little later when the hashes in question doesnt contain the entities id
         if (!hashes.containsKey(entityId)) {
+            System.out.println("out");
             return false;
         }
 
         long actual = hash(object, classInfo);
         long expected = hashes.get(entityId);
+        System.out.println("comparing ");
         return actual == expected;
     }
 

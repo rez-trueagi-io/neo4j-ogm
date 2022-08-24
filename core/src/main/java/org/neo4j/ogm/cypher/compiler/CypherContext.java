@@ -74,6 +74,7 @@ public class CypherContext implements CompileContext {
 
     @Override
     public void visit(Object entity, NodeBuilder nodeBuilder, int horizon) {
+        System.out.println("VISITING " + entity + " " + horizon);
         this.visitedObjects.put(getIdentity(entity), new NodeBuilderHorizonPair(nodeBuilder, horizon));
     }
 
@@ -88,6 +89,9 @@ public class CypherContext implements CompileContext {
     @Override
     public NodeBuilder visitedNode(Object entity) {
         NodeBuilderHorizonPair pair = this.visitedObjects.get(getIdentity(entity));
+        if(entity.getClass().getSimpleName().equals("VendorPayee")) {
+            System.out.println("IDENTITY " + getIdentity(entity) );
+        }
         return pair != null ? pair.getNodeBuilder() : null;
     }
 
@@ -245,6 +249,11 @@ public class CypherContext implements CompileContext {
     @Override
     public void deregister(NodeBuilder nodeBuilder) {
         compiler.unmap(nodeBuilder);
+        if(nodeBuilder.reference() != null) {
+            this.visitedObjects.remove(nodeBuilder.reference());
+        } else {
+
+        }
     }
 
     @Override

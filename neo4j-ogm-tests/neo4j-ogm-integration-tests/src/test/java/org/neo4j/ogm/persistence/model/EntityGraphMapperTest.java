@@ -34,11 +34,15 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.neo4j.ogm.config.Configuration;
 import org.neo4j.ogm.context.EntityGraphMapper;
 import org.neo4j.ogm.context.EntityMapper;
 import org.neo4j.ogm.context.MappingContext;
 import org.neo4j.ogm.cypher.compiler.Compiler;
 import org.neo4j.ogm.domain.blog.Post;
+import org.neo4j.ogm.domain.d.HasPOItemVendorPayee;
+import org.neo4j.ogm.domain.d.POItem;
+import org.neo4j.ogm.domain.d.VendorPayee;
 import org.neo4j.ogm.domain.education.Course;
 import org.neo4j.ogm.domain.education.School;
 import org.neo4j.ogm.domain.education.Student;
@@ -85,7 +89,8 @@ public class EntityGraphMapperTest extends TestContainersTestBase {
             "org.neo4j.ogm.domain.education",
             "org.neo4j.ogm.domain.forum",
             "org.neo4j.ogm.domain.social",
-            "org.neo4j.ogm.domain.policy");
+            "org.neo4j.ogm.domain.policy",
+            "org.neo4j.ogm.domain.d");
         mappingContext = new MappingContext(mappingMetadata);
     }
 
@@ -93,11 +98,24 @@ public class EntityGraphMapperTest extends TestContainersTestBase {
     public void setUpMapper() {
         sessionFactory = new SessionFactory(getDriver(), "org.neo4j.ogm.domain.policy",
             "org.neo4j.ogm.domain.election", "org.neo4j.ogm.domain.forum",
-            "org.neo4j.ogm.domain.education", "org.neo4j.ogm.domain.types", "org.neo4j.ogm.persistence.examples.versioned_rel_entity");
+            "org.neo4j.ogm.domain.education", "org.neo4j.ogm.domain.types", "org.neo4j.ogm.persistence.examples.versioned_rel_entity", "org.neo4j.ogm.domain.d");
         mappingContext.clear();
         this.mapper = new EntityGraphMapper(mappingMetadata, mappingContext);
         session = sessionFactory.openSession();
         session.purgeDatabase();
+    }
+
+    @Test
+    public void dky() {
+
+        POItem poItem = new POItem();
+        VendorPayee vendorPayee = new VendorPayee();
+        vendorPayee.setMgmtDiv("abc");
+        poItem.setHasPOItemVendorPayeeSet(Collections.singleton(new HasPOItemVendorPayee(vendorPayee, poItem)));
+
+        sessionFactory.runAutoIndexManager(new Configuration.Builder().autoIndex("UPDATE").build());
+        session.save(poItem);
+        assertThat(poItem.getId()).isNotNull();
     }
 
     @Test(expected = NullPointerException.class)

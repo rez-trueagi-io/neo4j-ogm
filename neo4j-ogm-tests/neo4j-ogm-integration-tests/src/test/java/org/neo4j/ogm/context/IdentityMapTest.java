@@ -62,6 +62,17 @@ public class IdentityMapTest {
     }
 
     @Test
+    public void testChangedPropertyDetected2() {
+        Teacher teacher = new Teacher("AaAa");
+
+
+        mappingContext.addNodeEntity(teacher);
+
+        teacher.setName("AaBB"); // the teacher's name property has changed.
+        assertThat(mappingContext.isDirty(teacher)).isTrue();
+    }
+
+    @Test
     public void testRelatedObjectChangeDoesNotAffectNodeMemoisation() {
         Teacher teacher = new Teacher("Miss White");
 
