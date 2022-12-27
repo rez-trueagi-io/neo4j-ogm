@@ -18,8 +18,8 @@
  */
 package org.neo4j.ogm.context;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.neo4j.ogm.metadata.MetaData;
 
 /**
@@ -29,13 +29,13 @@ public class NoGraphIdMappingContextTest {
 
     private MappingContext context;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         context = new MappingContext(new MetaData("org.neo4j.ogm.domain.drink"));
     }
 
     @Test
-    public void shouldHaveMappingContext() throws Exception {
+    void shouldHaveMappingContext() throws Exception {
 
     }
 }

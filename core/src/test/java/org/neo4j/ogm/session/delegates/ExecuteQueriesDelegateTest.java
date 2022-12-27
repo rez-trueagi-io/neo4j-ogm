@@ -21,10 +21,11 @@ package org.neo4j.ogm.session.delegates;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Test for new regular expression to determine write queries
@@ -32,76 +33,66 @@ import org.junit.runners.Parameterized;
  * @author Torsten Kuhnhenne
  * @author Michael J. Simons
  */
-@RunWith(Parameterized.class)
 public class ExecuteQueriesDelegateTest {
 
-    @Parameterized.Parameters
     public static Collection<Object[]> parameters() {
-        return Arrays.asList(new Object[][] {
-            { "CREATE (a:Actor) RETURN a", true },
-            { "create (a:Actor) return a", true },
-            // CREATE
-            { "CREATE (a:Actor) RETURN a", true }, { "create (a:Actor) return a", true },
-            // MERGE
-            { "MERGE (a:Actor {id : 10}) ON CREATE SET a.created = timestamp() ON MATCH SET a.accessTime = timestamp()",
-                true },
-            { "merge (a:Actor {id : 10}) ON CREATE SET a.created = timestamp() ON MATCH SET a.accessTime = timestamp()",
-                true },
-            // SET
-            { "MATCH (a:Actor) SET a.age = 45", true },
-            { "match (a:Actor) set a.age = 45", true },
-            // DELETE
-            { "MATCH (a:Actor) DELETE a", true },
-            { "match (a:Actor) delete a", true },
-            { "MATCH (a:Actor) DETACH DELETE a", true },
-            { "match (a:Actor) detach delete a", true },
-            // REMOVE
-            { "MATCH (a:Actor) REMOVE a.age", true }, { "match (a:Actor) remove a.age", true },
-            // DROP
-            { "DROP USER test", true },
-            // CALL
-            { "call sp.doSomething()", true },
-            { "CALL sp.doSomething()", true },
-            { "MATCH (a:Actor) WITH a CALL sp.doSomething(a)", true },
-            // CALL with misspelled OGM READ_ONLY hint
-            { "MATCH (a:Actor) WITH a CALL /*+ OGM_READ_ONLY */ sp.doSomething(a)", true },
-            { "MATCH (a:Actor) WITH a CALL /*+ OGM_READ_ONLY */ sp.doSomething(a)", true },
-            { "MATCH (a:Actor) WITH a CALL /*+ OGM READ ONLY */ sp.doSomething(a)", true },
-            { "MATCH (a:Actor) WITH a CALL /*+ OGM READ _ONLY */ sp.doSomething(a)", true },
-            { "MATCH (a:Actor) WITH a CALL /*+OGM READ_ONLY */ sp.doSomething(a)", true },
-            { "MATCH (a:Actor) WITH a CALL /*+ OGM READ_ONLY*/ sp.doSomething(a)", true },
-            { "MATCH (a:Actor) WITH a CALL /*+OGM READ_ONLY*/ sp.doSomething(a)", true },
-            { "call sp.doSomething() yield x \nWITH x MATCH (f:Foo) \nWHERE f.x = x RETURN f ", true },
-            // Simple match
-            { "MATCH (a:Actor) RETURN a", false }, { "match (a:Actor) return a", false },
-            // CALL with OGM READ_ONLY-hint
-            { "call /*+ OGM READ_ONLY */ sp.doSomething()", false },
-            { "/*+ OGM READ_ONLY */ call sp.doSomething()", false },
-            { "call sp.doSomething() /*+ OGM READ_ONLY */", false }, {
-            "MATCH (a:Actor) WITH a CALL /*+ OGM READ_ONLY */ sp.doSomething(a)", false },
-            { "call sp.doSomething() /*+ OGM READ_ONLY */ yield x \nWITH x MATCH (f:Foo) \nWHERE f.x = x RETURN f ",
-                false },
-            { "call sp.doSomething() yield x \nWITH x MATCH (f:Foo) \nWHERE f.x = x RETURN f /*+ OGM READ_ONLY */",
-                false },
+        return Arrays.asList(new Object[][]{
+                {"CREATE (a:Actor) RETURN a", true},
+                {"create (a:Actor) return a", true},
+                // CREATE
+                {"CREATE (a:Actor) RETURN a", true}, {"create (a:Actor) return a", true},
+                // MERGE
+                {"MERGE (a:Actor {id : 10}) ON CREATE SET a.created = timestamp() ON MATCH SET a.accessTime = timestamp()",
+                        true},
+                {"merge (a:Actor {id : 10}) ON CREATE SET a.created = timestamp() ON MATCH SET a.accessTime = timestamp()",
+                        true},
+                // SET
+                {"MATCH (a:Actor) SET a.age = 45", true},
+                {"match (a:Actor) set a.age = 45", true},
+                // DELETE
+                {"MATCH (a:Actor) DELETE a", true},
+                {"match (a:Actor) delete a", true},
+                {"MATCH (a:Actor) DETACH DELETE a", true},
+                {"match (a:Actor) detach delete a", true},
+                // REMOVE
+                {"MATCH (a:Actor) REMOVE a.age", true}, {"match (a:Actor) remove a.age", true},
+                // DROP
+                {"DROP USER test", true},
+                // CALL
+                {"call sp.doSomething()", true},
+                {"CALL sp.doSomething()", true},
+                {"MATCH (a:Actor) WITH a CALL sp.doSomething(a)", true},
+                // CALL with misspelled OGM READ_ONLY hint
+                {"MATCH (a:Actor) WITH a CALL /*+ OGM_READ_ONLY */ sp.doSomething(a)", true},
+                {"MATCH (a:Actor) WITH a CALL /*+ OGM_READ_ONLY */ sp.doSomething(a)", true},
+                {"MATCH (a:Actor) WITH a CALL /*+ OGM READ ONLY */ sp.doSomething(a)", true},
+                {"MATCH (a:Actor) WITH a CALL /*+ OGM READ _ONLY */ sp.doSomething(a)", true},
+                {"MATCH (a:Actor) WITH a CALL /*+OGM READ_ONLY */ sp.doSomething(a)", true},
+                {"MATCH (a:Actor) WITH a CALL /*+ OGM READ_ONLY*/ sp.doSomething(a)", true},
+                {"MATCH (a:Actor) WITH a CALL /*+OGM READ_ONLY*/ sp.doSomething(a)", true},
+                {"call sp.doSomething() yield x \nWITH x MATCH (f:Foo) \nWHERE f.x = x RETURN f ", true},
+                // Simple match
+                {"MATCH (a:Actor) RETURN a", false}, {"match (a:Actor) return a", false},
+                // CALL with OGM READ_ONLY-hint
+                {"call /*+ OGM READ_ONLY */ sp.doSomething()", false},
+                {"/*+ OGM READ_ONLY */ call sp.doSomething()", false},
+                {"call sp.doSomething() /*+ OGM READ_ONLY */", false}, {
+                "MATCH (a:Actor) WITH a CALL /*+ OGM READ_ONLY */ sp.doSomething(a)", false},
+                {"call sp.doSomething() /*+ OGM READ_ONLY */ yield x \nWITH x MATCH (f:Foo) \nWHERE f.x = x RETURN f ",
+                        false},
+                {"call sp.doSomething() yield x \nWITH x MATCH (f:Foo) \nWHERE f.x = x RETURN f /*+ OGM READ_ONLY */",
+                        false},
         });
     }
 
-    private String query;
-
-    private boolean isWriteQuery;
-
-    public ExecuteQueriesDelegateTest(String query, boolean isWriteQuery) {
-        this.query = query;
-        this.isWriteQuery = isWriteQuery;
-    }
-
-    @Test
-    public void test() {
+    @MethodSource("parameters")
+    @ParameterizedTest
+    void test(String query, boolean isWriteQuery) {
         boolean mayBeReadWrite = ExecuteQueriesDelegate.mayBeReadWrite(query);
         if (isWriteQuery) {
-            Assert.assertTrue(mayBeReadWrite);
+            assertTrue(mayBeReadWrite);
         } else {
-            Assert.assertFalse(mayBeReadWrite);
+            assertFalse(mayBeReadWrite);
         }
     }
 }
