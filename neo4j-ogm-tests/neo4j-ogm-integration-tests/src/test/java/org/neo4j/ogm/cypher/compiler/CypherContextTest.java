@@ -66,11 +66,8 @@ public class CypherContextTest extends TestContainersTestBase {
     }
 
     @BeforeAll
-    public static void initSesssionFactory() {
+    public static void initSessionFactory() {
         sessionFactory = new SessionFactory(getDriver(), "org.neo4j.ogm.domain.gh576");
-    }
-
-    public void initCypherContextTest(@SuppressWarnings("unused") Integer iterations) {
     }
 
     @BeforeEach
@@ -86,7 +83,6 @@ public class CypherContextTest extends TestContainersTestBase {
     @MethodSource("data")
     @ParameterizedTest
     void shouldDeregisterRelationshipEntities(@SuppressWarnings("unused") Integer iterations) {
-        initCypherContextTest(iterations);
         Collection<DataItem> dataItems;
         FormulaItem formulaItem;
 

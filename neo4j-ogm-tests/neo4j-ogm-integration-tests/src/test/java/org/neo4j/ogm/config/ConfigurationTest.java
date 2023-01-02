@@ -100,8 +100,7 @@ public class ConfigurationTest {
     @Test
     void uriWithNoScheme() {
         assertThrows(RuntimeException.class, () -> {
-            Configuration configuration = new Configuration.Builder().uri("target/noe4j/my.db").build();
-            fail("Should have thrown a runtime exception about a missing URI Scheme");
+            new Configuration.Builder().uri("target/noe4j/my.db").build();
         });
     }
 

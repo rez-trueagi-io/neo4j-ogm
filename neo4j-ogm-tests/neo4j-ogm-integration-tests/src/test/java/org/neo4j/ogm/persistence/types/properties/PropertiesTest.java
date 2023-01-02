@@ -21,7 +21,6 @@ package org.neo4j.ogm.persistence.types.properties;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -135,8 +134,7 @@ public class PropertiesTest extends TestContainersTestBase {
     // GH-632
     @Test
     void shouldNotAllowNullKeys() {
-        Throwable exception = assertThrows(UnsupportedOperationException.class, () -> {
-
+        assertThatThrownBy(() -> {
             User user = new User("A");
             Map<String, Object> properties = new HashMap<>();
             properties.put(null, "irrelevant");
@@ -144,14 +142,15 @@ public class PropertiesTest extends TestContainersTestBase {
             session.save(user);
 
             session.clear();
-        });
-        assertTrue(exception.getMessage().contains("Null is not a supported property key!"));
+        })
+            .isInstanceOf(UnsupportedOperationException.class)
+            .hasMessageContaining("Null is not a supported property key!");
     }
 
     // GH-632
     @Test
     void shouldNotAllowKeysOtherThanStringAndEnum() {
-        Throwable exception = assertThrows(UnsupportedOperationException.class, () -> {
+        assertThatThrownBy(() -> {
 
             User user = new User("A");
             Map properties = new HashMap<>();
@@ -160,8 +159,9 @@ public class PropertiesTest extends TestContainersTestBase {
             session.save(user);
 
             session.clear();
-        });
-        assertTrue(exception.getMessage().contains("Only String and Enum allowed to be keys, got class java.lang.Integer"));
+        })
+            .isInstanceOf(UnsupportedOperationException.class)
+            .hasMessageContaining("Only String and Enum allowed to be keys, got class java.lang.Integer");
     }
 
     @Test
