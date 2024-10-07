@@ -21,3 +21,4 @@ jobs:
       - name: Run Maven build
         run: >
           ./mvnw --no-transfer-progress clean verify
+
